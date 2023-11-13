@@ -2,6 +2,8 @@ import { useState } from "react";
 import ListGroup from "./components/ListGroup/index";
 import { BsFillCalendarFill } from "react-icons/bs";
 import Button from "./components/Button/index";
+import Like from "./components/Like/Like";
+
 function App() {
   let items = ["New York", "Tokyo", "London", "Paris", "Delhi"];
   const handleSelectItem = (item: string) => {
@@ -18,7 +20,10 @@ function App() {
         />
       </div>
       <div>
-        <Button onClick={() => console.log("Clicked")}>My Button </Button>
+        <Button >My Button </Button>
+      </div>
+      <div>
+        <Like></Like>
       </div>
     </>
   );
