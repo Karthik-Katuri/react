@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "immer": "^10.0.3",
     "react-icons": "^4.11.0",
     "styled-components": "^6.1.1"
   }
