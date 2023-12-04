@@ -21,13 +21,36 @@ function App() {
   const [bugs, setBugs]= useState([
     {id : 1, title:'Bug 1', fixed:false},
     {id : 2, title:'Bug 2', fixed:false},
-  ])
+  ]);
 // sharing the state hook
-  const[cartItems, setCartItems]=useState(['Product 1', 'Product 2'])
+  const[cartItems, setCartItems]=useState(['Product 1', 'Product 2']);
+
+  //exercise 
+  const [games, setGames] = useState({
+    id:1,
+    player:{
+      name: 'John',
+    },
+  });
   
+ const[pizza, setPizza]= useState({
+  name:'Spicy pepparoni',
+  toppings:['Mushroom'],
+ });
+
+ const[cart,SetCart] = useState({
+  discount : .1,
+  items:[
+    {id:1, title: 'product 1', quantity: 1},
+    {id:2, title: 'product 2', quantity: 1}
+  ]
+
+ });
  
  //handleClick
   const handleClick = () => {
+SetCart({...cart, items: cart.items.map(item=>item.id ===1 ? {...item, quantity: item.quantity +1 }: item )})
+
     setDrink({ ...drink, Price: 6 });
 
     setCustomer({
@@ -42,12 +65,18 @@ function App() {
     setTags(tags.map(tag=> tag=== 'happy'? ' happiness':tag));
 
     // update array objects
-    //setBugs(bugs.map(bug => bug.id === 1? {...bug, fixed: true}: bug))
+    setBugs(bugs.map(bug => bug.id === 1? {...bug, fixed: true}: bug))
+    
     setBugs(produce(draft=> {
       const bug =draft.find(bug=> bug.id ===1);
       if (bug) bug.fixed = true;
-    }))
+    }));
+
+    setGames({...games, player:{...games.player,name:'Bob'}})
   };
+
+  setPizza({...pizza, toppings:[...pizza.toppings,'cheese']})
+
 
   return (
     <>
@@ -61,6 +90,7 @@ function App() {
         <NavBar cartItemsCount={cartItems.length}/>
         <Cart cartItems={cartItems} onClear={() => setCartItems([])}/>
       </div>
+      
     </>
   );
 }
