@@ -15,9 +15,10 @@ function App() {
     document.title= 'my app';
   })
 
-  return (
+  return (<>
     <div> <input ref={ref} type="text" className="form-control" /></div>
-  )
+    <div>APP</div>
+    </> )
 }
 
 export default App
