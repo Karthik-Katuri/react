@@ -17,7 +17,7 @@ function App() {
 
   return (<>
     <div> <input ref={ref} type="text" className="form-control" /></div>
-    <div>APP</div>
+    
     </> )
 }
 
