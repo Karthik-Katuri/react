@@ -1,4 +1,5 @@
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 
 interface User {
@@ -7,23 +8,23 @@ interface User {
 }
 
 function App() {
-const [users, setUsers]=useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [error, setError] = useState("");
 
-useEffect(()=>{
-axios.get<User[]>('https://jsonplaceholder.typicode.com/users')
-.then(res => setUsers(res.data));
-
-},[])
+  useEffect(() => {
+    axios
+      .get<User[]>("https://jsonplaceholder.typicode.com/dusers")
+      .then((res) => setUsers(res.data))
+      .catch((err) => setError(err.message));
+  }, []);
 
   return (
     <>
+      {error && <p className="text-danger">{error}</p>}
       <ul>
-        {
-          users.map(user=><li key={user.id}>
-            {user.name}
-
-          </li>)
-        }
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
       </ul>
     </>
   );
