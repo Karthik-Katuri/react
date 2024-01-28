@@ -1,90 +1,72 @@
-
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect, useState } from "react";
-import apiClient,{CanceledError} from "./services/api-client";
-
-interface User {
-  id: number;
-  name: string;
-}
+import userService, { User } from "./services/userService";
+import useUsers from "./hooks/useUsers";
 
 function App() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [error, setError] = useState("");
-  const [isLoading, setLoading] = useState(false);
+  const{users,error,isLoading,setUsers,setError}=useUsers();
 
-  useEffect(() => {
-    setLoading(true);
-    const controller = new AbortController();
-    const res = apiClient
-      .get<User[]>("/users", {
-        signal: controller.signal,
-      })
-
-      .then((res) => {
-        setUsers(res.data);
-        setLoading(false);
-      })
-
-      .catch((err) => {
-        if (err instanceof CanceledError) return;
-        setError(err.message);
-        setLoading(false);
-      });
-    // .finally(()=>{
-    //   setLoading(false);
-    // })
-    return () => controller.abort();
-  }, []);
-
-  const deleteUser =(user: User)=>{
-const originalUsers = [...users];
-setUsers(users.filter(u => u.id !== user.id ));
-apiClient.delete('/users/'+ user.id)
-.catch(err => {
-  setError(err.message);
-  setUsers(originalUsers);
-})
-  }
-
-  const addUser =()=>{
+  const deleteUser = (user: User) => {
     const originalUsers = [...users];
-    const newUser ={id:0, name: 'Karthik'};
-    setUsers  ([newUser, ...users]);
+    setUsers(users.filter((u) => u.id !== user.id));
 
-    apiClient.post('/users', newUser)
-    .then(({data:savedData})=>setUsers([savedData,...users]))
-    .catch (err => {
+    userService.delete(user.id).catch((err) => {
       setError(err.message);
       setUsers(originalUsers);
-
     });
-  }
+  };
 
-  const updateUser = (user:User) =>{
+  const addUser = () => {
     const originalUsers = [...users];
-    const updatedUser = {...user, name: user.name+ '!'};
-    setUsers(users.map(u=> u.id === user.id ? updatedUser : u))
-    apiClient.patch('/users/'+user.id,updatedUser)
-    .catch(err=>{
+    const newUser = { id: 0, name: "Karthik" };
+    setUsers([newUser, ...users]);
+
+    userService
+      .create(newUser)
+      .then(({ data: savedData }) => setUsers([savedData, ...users]))
+      .catch((err) => {
+        setError(err.message);
+        setUsers(originalUsers);
+      });
+  };
+
+  const updateUser = (user: User) => {
+    const originalUsers = [...users];
+    const updatedUser = { ...user, name: user.name + "!" };
+    setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
+    userService.update(updatedUser).catch((err) => {
       setError(err.message);
       setUsers(originalUsers);
-    })
-  }
+    });
+  };
   return (
     <>
       {error && <p className="text-danger">{error}</p>}
       {isLoading && <div className="spinner-border"></div>}
-     <button className="btn btn-primary mb-3" onClick={addUser}>Add</button>
+      <button className="btn btn-primary mb-3" onClick={addUser}>
+        Add
+      </button>
       <ul className="list-group">
         {users.map((user) => (
-          <li key={user.id} className="list-group-item d-flex justify-content-between">
+          <li
+            key={user.id}
+            className="list-group-item d-flex justify-content-between"
+          >
             {user.name}
             <div>
-           <button className="btn btn-outline-secondary mx-1" onClick={()=> updateUser(user)}>Update</button>
-            <button className="btn btn-outline-danger " onClick={()=> deleteUser(user)}>Delete</button>
+              <button
+                className="btn btn-outline-secondary mx-1"
+                onClick={() => updateUser(user)}
+              >
+                Update
+              </button>
+              <button
+                className="btn btn-outline-danger "
+                onClick={() => deleteUser(user)}
+              >
+                Delete
+              </button>
             </div>
-            </li>
+          </li>
         ))}
       </ul>
     </>
